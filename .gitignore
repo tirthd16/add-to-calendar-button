@@ -2,7 +2,7 @@
 /node_modules
 
 # dist folder.
-/dist
+# /dist
 demo/dist
 
 # tmp testing files.
