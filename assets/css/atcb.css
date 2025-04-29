@@ -950,6 +950,14 @@ a.atcb-modal-btn:not([disabled]):hover {
   fill: var(--icon-yahoo-color);
 }
 
+.atcb-icon.atcb-icon-facebook svg {
+  fill: #1877F2 !important;
+}
+
+.atcb-icon.atcb-icon-whatsapp svg {
+  fill: #128C7E !important;
+}
+
 .atcb-icon.atcb-icon-google svg,
 .atcb-icon.atcb-icon-msteams svg,
 .atcb-icon.atcb-icon-outlookcom svg {

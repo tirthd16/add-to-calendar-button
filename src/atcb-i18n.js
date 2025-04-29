@@ -29,6 +29,11 @@ const rtlLanguages = ['ar', 'fa'];
 
 // calendar names (except for iCal file, same in every language, but included to be adjustable)
 const calendarNames = {
+whatsapp: 'Whatsapp',
+email: 'Email',
+twitter: 'Twitter',
+copy: 'Copy',
+facebook: 'Facebook',
   apple: 'Apple',
   google: 'Google',
   ms365: 'Microsoft 365',

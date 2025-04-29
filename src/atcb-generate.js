@@ -71,6 +71,11 @@ function atcb_generate_label(host, data, parent, type, icon = false, text = '', 
         }
       }
       break;
+    case 'whatsapp':
+    case 'twitter':
+    case 'email':
+    case 'copy':
+    case 'facebook':
     case 'apple':
     case 'google':
     case 'ical':
@@ -169,7 +174,11 @@ function atcb_generate_label_content(data, parent, type, icon, text, oneOption) 
     iconEl.classList.add('atcb-icon');
     iconEl.setAttribute('part', type === 'trigger' ? 'atcb-button-icon' : 'atcb-list-icon');
     iconEl.classList.add(`atcb-icon-${type}`);
+    if (type === 'trigger'){
+    iconEl.innerHTML = atcbIcon[`${data.customType}`];
+    } else {
     iconEl.innerHTML = atcbIcon[`${type}`];
+    }
     parent.append(iconEl);
   }
   if (((type === 'trigger' || oneOption) && !data.hideTextLabelButton) || (!oneOption && type !== 'trigger' && !data.hideTextLabelList)) {

@@ -54,6 +54,21 @@ function atcb_generate_links(host, type, data, subEvent = 'all', keyboardTrigger
       }
       // apart from that, we generate the link
       switch (linkType) {
+          case 'whatsapp':
+              shareOnWhatsApp(data)
+              break;
+          case 'twitter':
+              shareOnTwitter(data)
+              break;
+          case 'email':
+              shareByEmail(data)
+              break;
+            case 'copy':
+              copyToClipboard(data)
+              break;
+        case 'facebook':
+        shareOnFacebook(data)
+          break;
         case 'ical': // also for apple (see above)
           atcb_generate_ical(host, data, type, subEvent, keyboardTrigger);
           break;
@@ -652,6 +667,90 @@ function atcb_ical_copy_note(host, dataUrl, data, keyboardTrigger) {
     return;
   }
   atcb_create_modal(host, data, 'warning', atcb_translate_hook('modal.webview.ical.h', data), atcb_translate_hook('modal.webview.ical.text', data) + '<br>' + atcb_translate_hook('modal.clipboard.text', data) + '<br>' + atcb_translate_hook('modal.webview.ical.steps', data), [], [], keyboardTrigger);
+}
+
+function formatEventMessage(event) {
+  const startDate = new Date(event.startDate);
+  const formattedDate = startDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+  const startTime = event.startTime.slice(0, 5);
+  const endTime = event.endTime.slice(0, 5);
+
+  let message = `${event.name}\n\n`;
+  message += `${event.desc}\n\n`;
+  message += `📅 ${formattedDate}\n`;
+  message += `⏰ ${startTime} - ${endTime}\n`;
+  message += `📍 ${event.location} \n`;
+    if (event.price) {
+  message += `💵 ${event.price} EUR\n\n`;
+    }
+  message += `For more events - Visit ${event.pageUrl} `;
+  
+  return message;
+}
+
+function openSecureLink(url) {
+  if (atcb_secure_url(url)) {
+    const newTab = window.open(url, "_blank");
+    if (newTab) {
+      newTab.focus();
+    }
+  }
+}
+
+function shareOnWhatsApp(event) {
+  const message = formatEventMessage(event);
+  const url = `https://wa.me/?text=${encodeURIComponent(message)}`;
+  openSecureLink(url);
+}
+
+function shareOnFacebook(event) {
+  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(event.pageUrl)}`;
+  openSecureLink(url);
+}
+
+function shareOnTwitter(event) {
+  const message = `${event.name} - ${event.startDate} at ${event.location} - For more events - Visit https://www.example.org`;
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+  openSecureLink(url);
+}
+
+function shareByEmail(event) {
+  const subject = `Join me at ${event.name} on ${event.startDate}`;
+  const body = formatEventMessage(event);
+  const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  openSecureLink(url);
+}
+
+async function copyToClipboard(event) {
+  const message = formatEventMessage(event);
+
+  try {
+    await navigator.clipboard.writeText(message);
+    return true;
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+
+    const textArea = document.createElement('textarea');
+    textArea.value = message;
+    textArea.style.position = 'fixed';
+    document.body.appendChild(textArea);
+    textArea.select();
+
+    try {
+      const successful = document.execCommand('copy');
+      document.body.removeChild(textArea);
+      return successful;
+    } catch (err) {
+      console.error('Fallback copy failed: ', err);
+      document.body.removeChild(textArea);
+      return false;
+    }
+  }
 }
 
 export { atcb_generate_links, atcb_set_fully_successful };
